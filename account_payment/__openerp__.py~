@@ -1,9 +1,10 @@
 {
-    'name': 'Petrofig-Charting',
+    'name': 'Account Payment',
     'version': '1.0',
     'category': 'Account Payment',
     'description': """
-      voyage ship module
+      Menu : Accounting/Sales/Group Receipts, Accounting/Purchases/Group Payments,
+      You can reconcile the invoice fully or partially and pay multi invoices of corresponding partner at once in verion 9
 """,
     'author': 'Mohit Kumar',
     'depends': ['base','base_setup','sale','account', 'product', 'analytic', 'board', 'report','purchase'],
