@@ -1,0 +1,4 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_custom_account_payment,access_custom_account_payment,model_custom_account_payment,,1,1,1,1
+access_wiz_payment,access_wiz_payment,model_wiz_payment,,1,1,1,1
+access_line_cr_dr,access_line_cr_dr,model_line_cr_dr,,1,1,1,1

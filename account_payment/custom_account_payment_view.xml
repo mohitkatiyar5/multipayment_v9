@@ -1,0 +1,174 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+	<data>
+	
+	<record id="custom_payment_form" model="ir.ui.view">
+            <field name="name">custom_acccount_payment</field>
+            <field name="model">custom.account.payment</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+	            <form string="Payment">
+		            <header>
+		              <button name="validate_payment" type="object" string="Confirm" class="oe_highlight" states="draft"/> 
+		              <button name="cancel_payment" type="object" string="Cancel" class="oe_highlight" states="posted" />
+		              <button name="set_to_draft" type="object" string="Set to Draft" class="oe_highlight" states="cancel" />
+		              <field name="state" widget="statusbar" statusbar_visible="draft,posted,cancel"/>
+		            </header>
+		           <sheet> 
+		           <div class="oe_button_box" name="button_box">
+                            <button class="oe_stat_button" name="button_journal_entries"
+                                    string="Journal Items" type="object"
+                                    attrs="{'invisible':[('state','not in',('posted'))]}" icon="fa-bars"/>
+                            <button class="oe_stat_button" name="button_invoices"
+                                    string="Invoices" type="object"
+                                    attrs="{'invisible':[('has_invoices','=',False)]}" icon="fa-bars"/> 
+                           <field name="has_invoices" invisible="1"/>
+                   </div>
+		           
+		           
+		           <group>
+				      <div class="oe_title oe_left">
+                            <h1>
+                              <field name="name" readonly="1" /> 
+                            </h1>
+                       </div>
+				    </group>
+		           
+		            <group  col="2" colspan="6">
+		              <group col="2">
+		              <field name="payment_type" required="1" widget="radio" on_change="get_payment_type(payment_type)" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+		              <field name="partner_type" nolabel="1" on_change="get_partner_type(partner_type)" required="1" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+		              <field name="partner_id" nolabel="1" required="1" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+		              <field name="journal_id" required="1" domain="[('type','in',('bank','cash'))]" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+		              <label for="amount"/>
+		               <div name="amount_div" class="o_row">
+                            <field name="amount" required="1" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+                            <field name="currency_id" attrs="{'readonly': [('state', '!=', 'draft')]}" required="1" options="{'no_create': True, 'no_open': True}" />
+		               </div>
+		             </group>
+		             <group col="2"> 
+		              <field name="payment_date" attrs="{'readonly': [('state', '!=', 'draft')]}" required="1"/>
+		              <field name="communication" attrs="{'readonly': [('state', '!=', 'draft')]}"/>
+		              <field name="total_amount" invisible="1"/>
+		              <field name="total_due_amount" invisible="1"/>
+		              <field name="total_allocated_amt" invisible="1"/>
+		              <field name="company_id" invisible="1"/>
+		              <field name="account_payment_id" invisible="1" attrs="{'invisible':[('write_off_amt','=',0)]}" />
+		              <field name="write_off_amt" />
+		              <field name="payment_option" widget="radio" attrs="{'invisible':[('write_off_amt','=',0)],'readonly': [('state', '!=', 'draft')]}"/>
+		              <field name="counter_part_account_id" placeholder="advance payment account" attrs="{'invisible':[('payment_option','not in',('with_writeoff'))],'required':[('payment_option','in',('with_writeoff'))],'readonly':[('state','not in','draft')]}"/>
+		            </group>
+		           </group> 
+		       <button name="%(action_wiz_invoice_lines)d" type="action" string="Get Invoices" attrs="{'invisible': [('state', '!=', 'draft')]}" class="oe_highlight oe_right" icon="gtk-jump-to"/>     
+		        <notebook>
+		         <page string="Voucher Lines" attrs="{'invisible':[('has_invoices','!=',True)]}">
+		           <field name="line_ids" colspan="4" nolabel="1">
+			           <tree editable="bottom" create="false" colors="red:state == 'draft';green:state == 'posted';grey:state == 'cancel';">
+				              <field name="invoice_id" readonly="1"/>
+				              <field name="amount" sum="Total" readonly="1"/>
+				              <field name="residual_amount" sum="Total" readonly="1"/>
+				              <field name="reconcile" on_change="get_reconciled_amt(residual_amount,reconcile)"/>
+				              <field name="allocated_amt" sum="Total"/>
+				              <field name="account_payment_id" invisible="1" />
+				              <field name="state" invisible="1" />
+			           </tree>
+		           </field>
+		         </page>
+		         </notebook>      
+		       </sheet>
+		         <div class="oe_chatter">
+                   <field name="message_follower_ids" widget="mail_followers"/>
+                   <field name="message_ids" widget="mail_thread"/>
+                </div>     
+	            </form>
+            </field>
+            </record>
+            
+            <record id="custom_payment_tree" model="ir.ui.view">
+            <field name="name">custom_acccount_payment</field>
+            <field name="model">custom.account.payment</field>
+            <field name="type">tree</field>
+            <field name="arch" type="xml">
+	            <tree string="Payment" colors="red:state == 'draft';green:state == 'posted';grey:state == 'cancel';">
+		              <field name="payment_date"/>
+		              <field name="name"/>
+		              <field name="journal_id"/>
+		              <field name="partner_id"/>
+		              <field name="amount"/>
+		              <field name="state"/>
+	            </tree>
+            </field>
+            </record>
+            
+            
+            <record id="custom_payment_search" model="ir.ui.view">
+            <field name="name">custom_acccount_payment</field>
+            <field name="model">custom.account.payment</field>
+            <field name="type">search</field>
+            <field name="arch" type="xml">
+	            <search string="Payment" >
+		              <field name="payment_date"/>
+		              <field name="name"/>
+		              <field name="journal_id"/>
+		              <field name="partner_id"/>
+		              <field name="amount"/>
+		              <field name="state"/>
+			            <filter name="customer_payment" string="Customer Payment" domain="[('payment_type','=','inbound')]"/>
+			            <filter name="supplier_payment" string="Supplier Payment Payment" domain="[('payment_type','=','outbound')]"/>
+			            <filter name="draft" string="draft" domain="[('state','=','draft')]"/>
+			            <filter name="posted" string="Posted" domain="[('state','=','posted')]"/>
+			            <filter name="cancel" string="Cancel" domain="[('state','=','cancel')]"/>
+		            <group string="Group By">
+			             <filter string="State" context="{'group_by':'state'}"/>
+			             <filter string="Payment Type" context="{'group_by':'payment_type'}"/>
+			             <filter string="Date" context="{'group_by':'payment_date'}"/>
+			             <filter string="Partner Type" context="{'group_by':'partner_type'}"/>
+			             <filter string="Payment Method" context="{'group_by':'journal_id'}"/>
+		            </group>
+	            </search>
+            </field>
+            </record> 
+            
+            
+          <record id="action_custom_payment" model="ir.actions.act_window">
+            <field name="name">Payment</field>
+            <field name="res_model">custom.account.payment</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('payment_type','=','outbound')]</field>
+            <field name="view_id" ref="custom_payment_tree"/>
+           <field name="context">{'default_payment_type':'outbound','default_state':'draft','default_currency_id':133,'payment_option':'without_writeoff'}</field>
+           <field name="search_view_id" ref="custom_payment_search"/>
+        </record> 
+        
+        
+         <record id="action_custom_receipt" model="ir.actions.act_window">
+            <field name="name">Receipt</field>
+            <field name="res_model">custom.account.payment</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">tree,form</field>
+            <field name="domain">[('payment_type','=','inbound')]</field>
+            <field name="view_id" ref="custom_payment_tree"/>
+            <field name="context">{'default_payment_type':'inbound','default_state':'draft','default_currency_id':133,'payment_option':'without_writeoff'}</field>
+            <field name="search_view_id" ref="custom_payment_search"/>
+        </record> 
+        
+        <menuitem name="Group Receipts" id="submenu_custom_receipt_id" action="action_custom_receipt" parent="account.menu_finance_receivables"/>
+        <menuitem name="Group Payments" id="submenu_custom_payment_id" action="action_custom_payment" parent="account.menu_finance_payables"/>
+        
+        
+        <record id="view_account_payment_form_inherit_id2" model="ir.ui.view">
+            <field name="name">account.payment.form</field>
+            <field name="model">account.payment</field>
+            <field name="inherit_id" ref="account.view_account_payment_form"/>
+            <field name="arch" type="xml">
+              <xpath expr="//field[@name='journal_id']" position="after">
+                <field name="counter_part_account_id" placeholder="advance payment account" attrs="{'readonly':[('state','not in','draft')]}"/>
+              </xpath>  
+           </field>
+      </record> 
+        
+  
+	</data>
+</openerp>	
+	

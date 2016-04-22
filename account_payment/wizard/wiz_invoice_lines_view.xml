@@ -1,0 +1,50 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+	<data>
+	
+	<record id="wiz_invoice_lines_form" model="ir.ui.view">
+            <field name="name">wiz_invoice_lines</field>
+            <field name="model">wiz.payment</field>
+            <field name="type">form</field>
+            <field name="arch" type="xml">
+	            <form string="Payment">
+		         <header>
+		          <button name="get_allocated_invoice_lines" type="object" string="Submit" class="oe_highlight" />
+		         </header>   
+		            <group col="4" colspan="6">
+		              <field name="total_amount" readonly="1"/>
+		              <field name="name" invisible="1"/>
+		              <field name="total_due_amount" readonly="1"/>
+		            </group>
+		           <notebook>
+		            <page string="Invoice Lines">
+		              <field name="invoice_lines" colspan="4" nolabel="1">
+		               <tree editable="bottom" create="false" colors="red:state == 'draft';green:state == 'posted';grey:state == 'cancel';">
+			              <field name="invoice_id"/>
+			              <field name="amount" sum="Total"/>
+			              <field name="residual_amount" sum="Total"/>
+			              <field name="reconcile" on_change="get_reconciled_amt(residual_amount,reconcile)"/>
+			              <field name="allocated_amt" sum="Total"/>
+			              <field name="state" invisible="1"/>
+		               </tree>
+		              </field>
+		            </page> 
+		          </notebook>  
+	            </form>
+            </field>
+            </record>
+            
+          <record id="action_wiz_invoice_lines" model="ir.actions.act_window">
+            <field name="name">Invoice Lines</field>
+            <field name="res_model">wiz.payment</field>
+            <field name="view_type">form</field>
+            <field name="view_mode">form</field>
+            <field name="target">new</field>
+        </record> 
+
+            
+             
+	
+	</data>
+</openerp>	
+	

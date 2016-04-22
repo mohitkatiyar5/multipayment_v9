@@ -1,0 +1,37 @@
+<?xml version="1.0" encoding="utf-8"?>
+<openerp>
+<data>
+
+
+    <report
+           string="Voucher Reports"
+           id="account_payment_report_id"
+           model="custom.account.payment"
+           report_type="qweb-pdf"
+           name="account_payment.account_custom_payment_report_id"
+           file="account_payment.account_custom_payment_report_id"/>
+           
+    <record id="account_payment_report_format" model="report.paperformat">
+	        <field name="name">Voucher Paper Format</field>
+	        <field name="default" eval="True" />
+	        <field name="format">A4</field>
+	        <field name="page_height">0</field>
+	        <field name="page_width">0</field>
+	        <field name="orientation">Portrait</field>
+	        <field name="margin_top">25</field>
+	        <field name="margin_bottom">15</field>
+	        <field name="margin_left">5</field>
+	        <field name="margin_right">5</field>
+	        <field name="header_line" eval="False" />
+	        <field name="header_spacing">20</field>
+	        <field name="dpi">110</field>
+    </record>
+    
+    <record id="account_payment.account_payment_report_id" model="ir.actions.report.xml">
+        <field name="paperformat_id" ref="account_payment.account_payment_report_format"/>
+    </record>
+
+
+
+</data>
+</openerp>

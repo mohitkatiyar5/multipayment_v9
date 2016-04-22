@@ -1,0 +1,24 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<openerp>
+	<data noupdate="1">
+		
+		
+		<record id="custom_receipt_sequence" model="ir.sequence">
+			<field name="name">Customer Payment</field>
+			<field name="code">customer.payment</field>
+			<field name="prefix">CUST.IN/</field>
+			<field name="padding">4</field>
+			<field name="company_id" eval="False"/>
+		</record>
+		
+		<record id="custom_payment_sequence" model="ir.sequence">
+			<field name="name">Supplier Payment</field>
+			<field name="code">supplier.payment</field>
+			<field name="prefix">SUPP.OUT/</field>
+			<field name="padding">4</field>
+			<field name="company_id" eval="False"/>
+		</record>
+		
+	</data>
+</openerp>
+
